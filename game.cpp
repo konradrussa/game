@@ -10,38 +10,21 @@
 #define winWidth 1000
 #define winHeight 1000
 
-int main(int argCount, char **args) {
+bool init_resources(void) { return true; }
 
-  auto windowFlags = SDL_WINDOW_OPENGL;
-  SDL_Window *window =
-      SDL_CreateWindow("OpenGL Test", 0, 0, winWidth, winHeight, windowFlags);
-  assert(window);
-  // SDL_GLContext Context = SDL_GL_CreateContext(Window);
+void render(SDL_Renderer &renderer) {}
+
+void free_resources() {}
+
+SDL_Renderer &mainLoop(SDL_Window &window, SDL_WindowFlags windowFlags) {
 
   SDL_Renderer *renderer = SDL_CreateRenderer(
-      window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+      &window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-  const std::vector<SDL_Vertex> verts = {
-      {
-          SDL_FPoint{400, 150},
-          SDL_Color{255, 0, 0, 255},
-          SDL_FPoint{0},
-      },
-      {
-          SDL_FPoint{200, 450},
-          SDL_Color{0, 0, 255, 255},
-          SDL_FPoint{0},
-      },
-      {
-          SDL_FPoint{600, 450},
-          SDL_Color{0, 255, 0, 255},
-          SDL_FPoint{0},
-      },
-  };
-
+  SDL_Event event;
   int running = 1;
   int fullScreen = 0;
-  SDL_Event event;
+
   while (running) {
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_KEYDOWN) {
@@ -52,10 +35,10 @@ int main(int argCount, char **args) {
         case 'f':
           fullScreen = !fullScreen;
           if (fullScreen) {
-            SDL_SetWindowFullscreen(window, windowFlags |
-                                                SDL_WINDOW_FULLSCREEN_DESKTOP);
+            SDL_SetWindowFullscreen(&window, windowFlags |
+                                                 SDL_WINDOW_FULLSCREEN_DESKTOP);
           } else {
-            SDL_SetWindowFullscreen(window, windowFlags);
+            SDL_SetWindowFullscreen(&window, windowFlags);
           }
           break;
         default:
@@ -65,21 +48,24 @@ int main(int argCount, char **args) {
         running = 0;
       }
     }
-
-    glViewport(0, 0, winWidth, winHeight);
-    glClearColor(1.f, 0.f, 1.f, 0.f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(renderer);
-    SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), nullptr,
-                       0);
-    SDL_RenderPresent(renderer);
-
-    SDL_GL_SwapWindow(window);
+    render(*renderer);
   }
+  return *renderer;
+}
 
-  SDL_DestroyRenderer(renderer);
+int main(int argCount, char **args) {
+  auto windowFlags = SDL_WINDOW_OPENGL;
+  SDL_Window *window =
+      SDL_CreateWindow("OpenGL Test", 0, 0, winWidth, winHeight, windowFlags);
+  assert(window);
+  // SDL_GLContext Context = SDL_GL_CreateContext(window);
+
+  if (!init_resources())
+    return EXIT_FAILURE;
+
+  SDL_Renderer &renderer = mainLoop(*window, windowFlags);
+
+  SDL_DestroyRenderer(&renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
   return 0;
