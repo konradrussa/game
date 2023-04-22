@@ -48,6 +48,19 @@
         "utility": "cpp",
         "initializer_list": "cpp",
         "thread": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "condition_variable": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "iostream": "cpp",
+        "mutex": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "future": "cpp"
     }
 }
