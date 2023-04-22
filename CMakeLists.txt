@@ -1,0 +1,23 @@
+cmake_minimum_required(VERSION 3.5.1)
+
+set(CMAKE_CXX_STANDARD 17)
+add_definitions(-std=c++17)
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+set(CXX_FLAGS "-Wall -Werror")
+set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
+
+set(MINGW32_LIBRARY mingw32 "-mwindows" CACHE STRING "link flags for MinGW")
+set(SDL2_LIBRARIES SDL2main SDL2 opengl32 CACHE STRING "link flags for SDL")
+
+string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
+
+project(CPP_GAME)
+set(SOURCE_FILES game.cpp)
+
+add_executable(game WIN32 ${SOURCE_FILES})
+target_link_libraries(game ${MINGW32_LIBRARY} ${SDL2_LIBRARIES})
+
+# MANUAL
+# g++ .\game.cpp -ID:\C++\repo\game\include -lmingw32 -mwindows -lSDL2main -lSDL2 -lopengl32
