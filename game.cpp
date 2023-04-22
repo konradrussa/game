@@ -7,23 +7,19 @@
 #include <stdio.h>
 #include <vector>
 
-typedef int32_t i32;
-typedef uint32_t u32;
-typedef int32_t b32;
+#define winWidth 1000
+#define winHeight 1000
 
-#define WinWidth 1000
-#define WinHeight 1000
+int main(int argCount, char **args) {
 
-int main(int ArgCount, char **Args) {
-
-  u32 WindowFlags = SDL_WINDOW_OPENGL;
-  SDL_Window *Window =
-      SDL_CreateWindow("OpenGL Test", 0, 0, WinWidth, WinHeight, WindowFlags);
-  assert(Window);
-  //SDL_GLContext Context = SDL_GL_CreateContext(Window);
+  auto windowFlags = SDL_WINDOW_OPENGL;
+  SDL_Window *window =
+      SDL_CreateWindow("OpenGL Test", 0, 0, winWidth, winHeight, windowFlags);
+  assert(window);
+  // SDL_GLContext Context = SDL_GL_CreateContext(Window);
 
   SDL_Renderer *renderer = SDL_CreateRenderer(
-      Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+      window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
   const std::vector<SDL_Vertex> verts = {
       {
@@ -43,47 +39,48 @@ int main(int ArgCount, char **Args) {
       },
   };
 
-  b32 Running = 1;
-  b32 FullScreen = 0;
-  while (Running) {
-    SDL_Event Event;
-    while (SDL_PollEvent(&Event)) {
-      if (Event.type == SDL_KEYDOWN) {
-        switch (Event.key.keysym.sym) {
+  int running = 1;
+  int fullScreen = 0;
+  SDL_Event event;
+  while (running) {
+    while (SDL_PollEvent(&event)) {
+      if (event.type == SDL_KEYDOWN) {
+        switch (event.key.keysym.sym) {
         case SDLK_ESCAPE:
-          Running = 0;
+          running = 0;
           break;
         case 'f':
-          FullScreen = !FullScreen;
-          if (FullScreen) {
-            SDL_SetWindowFullscreen(Window, WindowFlags |
+          fullScreen = !fullScreen;
+          if (fullScreen) {
+            SDL_SetWindowFullscreen(window, windowFlags |
                                                 SDL_WINDOW_FULLSCREEN_DESKTOP);
           } else {
-            SDL_SetWindowFullscreen(Window, WindowFlags);
+            SDL_SetWindowFullscreen(window, windowFlags);
           }
           break;
         default:
           break;
         }
-      } else if (Event.type == SDL_QUIT) {
-        Running = 0;
+      } else if (event.type == SDL_QUIT) {
+        running = 0;
       }
     }
 
-    glViewport(0, 0, WinWidth, WinHeight);
+    glViewport(0, 0, winWidth, winHeight);
     glClearColor(1.f, 0.f, 1.f, 0.f);
     glClear(GL_COLOR_BUFFER_BIT);
-    SDL_GL_SwapWindow(Window);
-    /*
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-        SDL_RenderClear(renderer);
-        SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(),
-       nullptr,0); SDL_RenderPresent(renderer);
-    */
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(renderer);
+    SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), nullptr,
+                       0);
+    SDL_RenderPresent(renderer);
+
+    SDL_GL_SwapWindow(window);
   }
 
   SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(Window);
+  SDL_DestroyWindow(window);
   SDL_Quit();
   return 0;
 }
