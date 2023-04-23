@@ -7,4 +7,4 @@ Manual compilation:
 g++ .\game.cpp -ID:\C++\repo\game\include -lmingw32 -mwindows -lSDL2main -lSDL2 -lopengl32
 
 
-![Alt text](picture.png?raw=true "Title")
+![Screenshot](picture.PNG)
