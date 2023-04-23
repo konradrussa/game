@@ -20,22 +20,26 @@ public:
 private:
   SDL_Renderer *renderer;
   SDL_Window *window;
+  SDL_GLContext context;
   SDL_WindowFlags windowFlags;
   std::vector<SDL_Vertex> verts;
   std::vector<SDL_Point> points;
+
   void renderStart(SDL_Rect &rect);
 };
 
 GameRenderer::GameRenderer() {
+  SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO,
+                 "Starting Application.");
   windowFlags = SDL_WINDOW_OPENGL;
   window =
       SDL_CreateWindow("Game Test", 0, 0, winWidth, winHeight, windowFlags);
   renderer = SDL_CreateRenderer(
       window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-  // SDL_GLContext context = SDL_GL_CreateContext(game.window);
+  context = SDL_GL_CreateContext(window);
   assert(window);
   assert(renderer);
+  SDL_GL_SetSwapInterval(1);
   verts = {{
                SDL_FPoint{400, 150},
                SDL_Color{255, 0, 0, 255},
@@ -54,6 +58,7 @@ GameRenderer::GameRenderer() {
 }
 
 GameRenderer::~GameRenderer() {
+  SDL_GL_DeleteContext(context);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
@@ -68,21 +73,23 @@ void GameRenderer::renderStart(SDL_Rect &rect) {
 
 void GameRenderer::render() {
 
-  // glViewport(0, 0, winWidth, winHeight);
-  // glClearColor(1.f, 0.f, 1.f, 0.f);
-  // glClear(GL_COLOR_BUFFER_BIT);
-  // GLuint colorbuffer;
-  // SDL_GL_SwapWindow(&window);
+  glViewport(0, 0, winWidth, winHeight);
+  glClearColor(0.f, 1.f, 0.f, 0.5f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  SDL_Delay(100);
+  SDL_GL_SwapWindow(window);
 
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
-
   SDL_Rect rect;
   rect.x = 100;
   rect.y = 50;
-
   renderStart(rect);
+
+  SDL_Delay(100);
+  SDL_GL_SwapWindow(window);
 
   SDL_RenderPresent(renderer);
 }

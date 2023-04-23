@@ -2,6 +2,7 @@
 
 bool Game::initResources() {
   try {
+    gameController->logging("Reading MAP");
     return gameMap->readMap();
   } catch (...) {
     gameController->handleException(std::current_exception());
