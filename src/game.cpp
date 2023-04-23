@@ -1,13 +1,17 @@
 #include "game.h"
 
 bool Game::initResources() {
+  bool mapLoaded = false;
   try {
     gameController->logging("Reading MAP");
-    return gameMap->readMap();
+    mapLoaded = gameMap->readMap();
+    if (mapLoaded) {
+      this->gameRenderer->loadMap(&gameMap->getStates());
+    }
   } catch (...) {
     gameController->handleException(std::current_exception());
   }
-  return false;
+  return mapLoaded;
 }
 
 void Game::freeResources() {}

@@ -17,6 +17,7 @@ public:
   ~GameMap(){};
 
   bool readMap();
+  std::vector<std::vector<State>>& getStates();
 
 private:
   std::vector<std::vector<State>> states;
@@ -55,6 +56,10 @@ bool GameMap::readMap() {
     throw std::runtime_error("Map file not found!");
   }
   return true;
+}
+
+std::vector<std::vector<State>>& GameMap::getStates() {
+  return states;
 }
 
 #endif

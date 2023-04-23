@@ -15,6 +15,7 @@ public:
   ~GameRenderer();
 
   void render();
+  void loadMap(std::vector<std::vector<State>> *states);
   void fullscreen(bool desktop);
 
 private:
@@ -22,10 +23,10 @@ private:
   SDL_Window *window;
   SDL_GLContext context;
   SDL_WindowFlags windowFlags;
-  std::vector<SDL_Vertex> verts;
-  std::vector<SDL_Point> points;
+  // std::vector<SDL_Point> points;
+  std::vector<std::vector<State>> *states;
 
-  void renderStart(SDL_Rect &rect);
+  void renderRect(SDL_Rect &rect, int sizeOfCell);
 };
 
 GameRenderer::GameRenderer() {
@@ -39,22 +40,6 @@ GameRenderer::GameRenderer() {
   context = SDL_GL_CreateContext(window);
   assert(window);
   assert(renderer);
-  SDL_GL_SetSwapInterval(1);
-  verts = {{
-               SDL_FPoint{400, 150},
-               SDL_Color{255, 0, 0, 255},
-               SDL_FPoint{0},
-           },
-           {
-               SDL_FPoint{200, 450},
-               SDL_Color{0, 0, 255, 255},
-               SDL_FPoint{0},
-           },
-           {
-               SDL_FPoint{600, 450},
-               SDL_Color{0, 255, 0, 255},
-               SDL_FPoint{0},
-           }};
 }
 
 GameRenderer::~GameRenderer() {
@@ -64,34 +49,56 @@ GameRenderer::~GameRenderer() {
   SDL_Quit();
 }
 
-void GameRenderer::renderStart(SDL_Rect &rect) {
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xCC, 0x00, 0xFF);
-  rect.h = 8;
-  rect.w = 8;
+void GameRenderer::renderRect(SDL_Rect &rect, int sizeOfCell) {
+  rect.h = sizeOfCell;
+  rect.w = sizeOfCell;
   SDL_RenderFillRect(renderer, &rect);
 }
 
 void GameRenderer::render() {
-
-  glViewport(0, 0, winWidth, winHeight);
-  glClearColor(0.f, 1.f, 0.f, 0.5f);
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  SDL_Delay(100);
-  SDL_GL_SwapWindow(window);
-
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
-  SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
-  SDL_Rect rect;
-  rect.x = 100;
-  rect.y = 50;
-  renderStart(rect);
-
-  SDL_Delay(100);
-  SDL_GL_SwapWindow(window);
-
+  int numberOfCells = this->states->size();
+  int sizeOfCell = int(winHeight / numberOfCells);
+  int x = 0, y = 0;
+  for (auto &stateRow : *this->states) {
+    for (State &state : stateRow) {
+      switch (state) {
+      case State::kEmpty: {
+        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+        break;
+      }
+      case State::kFinish: {
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+        break;
+      }
+      case State::kObstacle: {
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        break;
+      }
+      case State::kPath: {
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0x00, 0xFF);
+        break;
+      }
+      case State::kStart: {
+        SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
+        break;
+      }
+      }
+      SDL_Rect rect;
+      rect.x = x * sizeOfCell;
+      rect.y = y * sizeOfCell;
+      renderRect(rect, sizeOfCell);
+      x++;
+    }
+    x = 0;
+    y++;
+  }
   SDL_RenderPresent(renderer);
+}
+
+void GameRenderer::loadMap(std::vector<std::vector<State>> *states) {
+  this->states = states;
 }
 
 void GameRenderer::fullscreen(bool desktop) {
@@ -102,5 +109,13 @@ void GameRenderer::fullscreen(bool desktop) {
     SDL_SetWindowFullscreen(window, windowFlags);
   }
 }
+
+/*
+void windowSize() {
+  int w, h;
+  SDL_GetWindowSize(this->window, &w, &h);
+  glViewport(0, 0, w, h);
+}
+*/
 
 #endif
