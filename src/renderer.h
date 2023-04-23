@@ -68,8 +68,12 @@ void GameRenderer::render() {
         SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
         break;
       }
-      case State::kFinish: {
+      case State::kEnemy: {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+        break;
+      }
+      case State::kFinish: {
+        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
         break;
       }
       case State::kObstacle: {

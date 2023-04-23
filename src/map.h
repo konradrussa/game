@@ -9,7 +9,7 @@
 
 #define MAP_FILE "data/map.txt"
 
-enum class State { kEmpty, kObstacle, kPath, kStart, kFinish };
+enum class State { kEmpty, kEnemy, kObstacle, kPath, kStart, kFinish };
 
 class GameMap {
 public:
@@ -17,7 +17,7 @@ public:
   ~GameMap(){};
 
   bool readMap();
-  std::vector<std::vector<State>>& getStates();
+  std::vector<std::vector<State>> &getStates();
 
 private:
   std::vector<std::vector<State>> states;
@@ -37,6 +37,8 @@ std::vector<State> GameMap::parseLine(std::string line) {
       row.push_back(State::kStart);
     } else if (n == 'X') {
       row.push_back(State::kFinish);
+    } else if (n == 'E') {
+      row.push_back(State::kEnemy);
     } else {
       throw std::runtime_error("Unknown character on map!");
     }
@@ -58,8 +60,6 @@ bool GameMap::readMap() {
   return true;
 }
 
-std::vector<std::vector<State>>& GameMap::getStates() {
-  return states;
-}
+std::vector<std::vector<State>> &GameMap::getStates() { return states; }
 
 #endif
