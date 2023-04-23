@@ -10,16 +10,17 @@
 #include <mutex>
 #include <thread>
 
-class Controller {
+class GameController {
 public:
-  Controller(){};
-  ~Controller(){};
-  void handleException(std::exception_ptr exPtr);
+  GameController(){};
+  ~GameController(){};
+
   void logging();
   void logging(std::string msg);
+  void handleException(std::exception_ptr exPtr);
 };
 
-void Controller::handleException(std::exception_ptr exPtr) {
+void GameController::handleException(std::exception_ptr exPtr) {
   try {
     std::rethrow_exception(exPtr);
   } catch (const std::exception &e) {
@@ -28,10 +29,12 @@ void Controller::handleException(std::exception_ptr exPtr) {
     logging("FATAL ERROR !!!");
   }
 }
-void Controller::logging(std::string msg) {
+
+void GameController::logging(std::string msg) {
   SDL_Log("Error: %s\n", msg.c_str());
   std::cerr << "ERROR: " << msg << std::endl;
 }
-void Controller::logging() { SDL_Log("SDL_Error: %s\n", SDL_GetError()); }
+
+void GameController::logging() { logging(SDL_GetError()); }
 
 #endif

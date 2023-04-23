@@ -1,7 +1,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <SDL.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -16,11 +15,11 @@ class GameMap {
 public:
   GameMap(){};
   ~GameMap(){};
+
   bool readMap();
 
 private:
   std::vector<std::vector<State>> states;
-  std::vector<SDL_Point> points;
   std::vector<State> parseLine(std::string line);
 };
 

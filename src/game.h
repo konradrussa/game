@@ -13,19 +13,21 @@ class Game {
 public:
   Game();
   ~Game(){};
+
   bool initResources();
   void mainLoop();
   void freeResources();
 
 private:
   std::unique_ptr<GameMap> gameMap;
-  std::unique_ptr<Renderer> gameRenderer;
-  std::shared_ptr<Controller> gameController;
+  std::unique_ptr<GameRenderer> gameRenderer;
+  std::shared_ptr<GameController> gameController;
 };
+
 Game::Game() {
   gameMap = std::make_unique<GameMap>();
-  gameRenderer = std::make_unique<Renderer>();
-  gameController = std::make_shared<Controller>();
+  gameRenderer = std::make_unique<GameRenderer>();
+  gameController = std::make_shared<GameController>();
 }
 
 #endif
