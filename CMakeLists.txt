@@ -22,4 +22,4 @@ target_link_libraries(game ${MINGW32_LIBRARY} ${SDL2_LIBRARIES})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/map.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
 # MANUAL
-# g++ .\game.cpp -ID:\C++\repo\game\include -lmingw32 -mwindows -lSDL2main -lSDL2 -lopengl32
+# g++ .\game.cpp -IC\:\msys64\mingw64\include\SDL2 -lmingw32 -mwindows -lSDL2main -lSDL2 -lopengl32

@@ -24,6 +24,8 @@ private:
   std::vector<State> parseLine(std::string line);
 };
 
+std::vector<std::vector<State>> &GameMap::getStates() { return states; }
+
 std::vector<State> GameMap::parseLine(std::string line) {
   std::istringstream sline(line);
   char n, c;
@@ -59,7 +61,5 @@ bool GameMap::readMap() {
   }
   return true;
 }
-
-std::vector<std::vector<State>> &GameMap::getStates() { return states; }
 
 #endif

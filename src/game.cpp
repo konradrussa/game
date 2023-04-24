@@ -6,7 +6,7 @@ bool Game::initResources() {
     gameController->logging("Reading MAP");
     mapLoaded = gameMap->readMap();
     if (mapLoaded) {
-      this->gameRenderer->loadMap(&gameMap->getStates());
+      gameRenderer->loadMap(&gameMap->getStates());
     }
   } catch (...) {
     gameController->handleException(std::current_exception());

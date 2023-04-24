@@ -58,10 +58,10 @@ void GameRenderer::renderRect(SDL_Rect &rect, int sizeOfCell) {
 void GameRenderer::render() {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
-  int numberOfCells = this->states->size();
+  int numberOfCells = states->size();
   int sizeOfCell = int(winHeight / numberOfCells);
   int x = 0, y = 0;
-  for (auto &stateRow : *this->states) {
+  for (auto &stateRow : *states) {
     for (State &state : stateRow) {
       switch (state) {
       case State::kEmpty: {
