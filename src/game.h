@@ -19,7 +19,7 @@ public:
 private:
   std::unique_ptr<GameMap> gameMap;
   std::unique_ptr<GameRenderer> gameRenderer;
-  std::shared_ptr<GameController<Movable>> gameController;
+  std::shared_ptr<GameController<Player>> gameController;
   std::vector<std::thread> _threads;
   SDL_Event event;
   int running = 1;
@@ -29,7 +29,7 @@ private:
 Game::Game() {
   gameMap = std::make_unique<GameMap>();
   gameRenderer = std::make_unique<GameRenderer>();
-  gameController = std::make_shared<GameController<Movable>>();
+  gameController = std::make_shared<GameController<Player>>();
 }
 
 #endif

@@ -95,6 +95,7 @@ void GameRenderer::render() {
     cols = 0, rows++;
   }
   SDL_RenderPresent(renderer);
+  SDL_Delay(1000);
 }
 
 void GameRenderer::setStates(std::vector<std::vector<State>> *states) {

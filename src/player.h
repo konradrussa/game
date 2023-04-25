@@ -35,11 +35,11 @@ public:
   void action(Direction direction);
 };
 
-class Enemy : public Movable {
+class Enemy : public Player {
 public:
   Enemy();
   ~Enemy();
-  Enemy(const State &_state) : Movable(_state) {}
+  Enemy(const State &_state) : Player(_state) {}
   Enemy(Enemy &);
   Enemy(Enemy &&);
   Enemy &operator=(Enemy &);
@@ -74,7 +74,7 @@ Player &Player::operator=(Player &&other) {
 }
 void Player::action(Direction direction) {}
 
-Enemy::Enemy() : Movable(State::kEnemy){};
+Enemy::Enemy() : Player(State::kEnemy){};
 Enemy::~Enemy(){};
 Enemy::Enemy(Enemy &other) {
   state = other.state;
@@ -98,6 +98,6 @@ Enemy &Enemy::operator=(Enemy &&other) {
   }
   return *this;
 }
-void Enemy::action(Direction direction) {}
+void Enemy::action(Direction direction) {} //upfront finds path and calculate direction
 
 #endif
