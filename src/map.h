@@ -9,7 +9,7 @@
 
 #define MAP_FILE "data/map.txt"
 
-enum class State { kEmpty, kEnemy, kObstacle, kPath, kStart, kFinish };
+enum class State { kEmpty, kEnemy, kObstacle, kPath, kPlayer, kFinish };
 
 class GameMap {
 public:
@@ -35,8 +35,8 @@ std::vector<State> GameMap::parseLine(std::string line) {
       row.push_back(State::kEmpty);
     } else if (n == '1') {
       row.push_back(State::kObstacle);
-    } else if (n == 'S') {
-      row.push_back(State::kStart);
+    } else if (n == 'S') { //Start
+      row.push_back(State::kPlayer);
     } else if (n == 'X') {
       row.push_back(State::kFinish);
     } else if (n == 'E') {

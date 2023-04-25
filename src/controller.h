@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <algorithm>
 #include <condition_variable>
 #include <deque>

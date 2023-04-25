@@ -8,8 +8,6 @@
 
 #include <memory>
 
-enum class Direction { kUp, kDown, kLeft, kRight };
-
 class Game {
 public:
   Game();
@@ -17,12 +15,15 @@ public:
 
   bool initResources();
   void mainLoop();
-  void freeResources();
 
 private:
   std::unique_ptr<GameMap> gameMap;
   std::unique_ptr<GameRenderer> gameRenderer;
   std::shared_ptr<GameController<Movable>> gameController;
+  std::vector<std::thread> _threads;
+  SDL_Event event;
+  int running = 1;
+  bool fullScreen = false;
 };
 
 Game::Game() {

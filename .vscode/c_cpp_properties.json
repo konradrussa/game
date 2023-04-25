@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${vcpkgRoot}/x64-windows/include",
-                "C:/msys64/mingw64/include/SDL2"
+                "C:/msys64/mingw64/include"
             ],
             "defines": [
                 "_DEBUG",

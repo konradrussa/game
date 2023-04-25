@@ -2,8 +2,8 @@
 #define RENDERER_H
 
 #include <GL/gl.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include <assert.h>
 
 #define winWidth 1000
@@ -15,7 +15,7 @@ public:
   ~GameRenderer();
 
   void render();
-  void loadMap(std::vector<std::vector<State>> *states);
+  void setStates(std::vector<std::vector<State>> *states);
   void fullscreen(bool desktop);
 
 private:
@@ -23,10 +23,10 @@ private:
   SDL_Window *window;
   SDL_GLContext context;
   SDL_WindowFlags windowFlags;
-  // std::vector<SDL_Point> points;
   std::vector<std::vector<State>> *states;
-
-  void renderRect(SDL_Rect &rect, int sizeOfCell);
+  int numberOfCells = 0, sizeOfCell = 0, rows = 0, cols = 0;
+  SDL_Rect rect;
+  void renderRectangle();
 };
 
 GameRenderer::GameRenderer() {
@@ -49,7 +49,9 @@ GameRenderer::~GameRenderer() {
   SDL_Quit();
 }
 
-void GameRenderer::renderRect(SDL_Rect &rect, int sizeOfCell) {
+void GameRenderer::renderRectangle() {
+  rect.x = cols * sizeOfCell;
+  rect.y = rows * sizeOfCell;
   rect.h = sizeOfCell;
   rect.w = sizeOfCell;
   SDL_RenderFillRect(renderer, &rect);
@@ -58,9 +60,7 @@ void GameRenderer::renderRect(SDL_Rect &rect, int sizeOfCell) {
 void GameRenderer::render() {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
-  int numberOfCells = states->size();
-  int sizeOfCell = int(winHeight / numberOfCells);
-  int x = 0, y = 0;
+  rows = 0, cols = 0;
   for (auto &stateRow : *states) {
     for (State &state : stateRow) {
       switch (state) {
@@ -84,25 +84,23 @@ void GameRenderer::render() {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0x00, 0xFF);
         break;
       }
-      case State::kStart: {
+      case State::kPlayer: {
         SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
         break;
       }
       }
-      SDL_Rect rect;
-      rect.x = x * sizeOfCell;
-      rect.y = y * sizeOfCell;
-      renderRect(rect, sizeOfCell);
-      x++;
+      renderRectangle();
+      cols++;
     }
-    x = 0;
-    y++;
+    cols = 0, rows++;
   }
   SDL_RenderPresent(renderer);
 }
 
-void GameRenderer::loadMap(std::vector<std::vector<State>> *states) {
+void GameRenderer::setStates(std::vector<std::vector<State>> *states) {
   this->states = states;
+  numberOfCells = states->size();
+  sizeOfCell = int(winHeight / numberOfCells);
 }
 
 void GameRenderer::fullscreen(bool desktop) {
