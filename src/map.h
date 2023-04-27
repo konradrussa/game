@@ -22,6 +22,7 @@ public:
 private:
   std::vector<std::vector<State>> states;
   std::vector<State> parseLine(std::string line);
+
 };
 
 std::vector<std::vector<State>> &GameMap::getStates() { return states; }

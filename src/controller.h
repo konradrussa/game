@@ -10,9 +10,6 @@
 #include <mutex>
 #include <thread>
 
-#include "astar.h"
-//auto solution = Search(states, init, goal); init - Enemy location, goal - Player location
-
 template <class T> class GameController {
 public:
   GameController(){};

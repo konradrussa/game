@@ -6,6 +6,8 @@
 #include <SDL2/SDL_opengl.h>
 #include <assert.h>
 
+#include "map.h"
+
 #define winWidth 1000
 #define winHeight 1000
 
@@ -16,7 +18,7 @@ public:
 
   void render();
   void setStates(std::vector<std::vector<State>> *states);
-  void fullscreen(bool desktop);
+  void fullscreen();
 
 private:
   SDL_Renderer *renderer;
@@ -26,6 +28,7 @@ private:
   std::vector<std::vector<State>> *states;
   int numberOfCells = 0, sizeOfCell = 0, rows = 0, cols = 0;
   SDL_Rect rect;
+  bool fullScreen = false;
   void renderRectangle();
 };
 
@@ -95,7 +98,7 @@ void GameRenderer::render() {
     cols = 0, rows++;
   }
   SDL_RenderPresent(renderer);
-  SDL_Delay(1000);
+  // SDL_Delay(1000);
 }
 
 void GameRenderer::setStates(std::vector<std::vector<State>> *states) {
@@ -104,8 +107,9 @@ void GameRenderer::setStates(std::vector<std::vector<State>> *states) {
   sizeOfCell = int(winHeight / numberOfCells);
 }
 
-void GameRenderer::fullscreen(bool desktop) {
-  if (desktop) {
+void GameRenderer::fullscreen() {
+  fullScreen = !fullScreen;
+  if (fullScreen) {
     SDL_SetWindowFullscreen(window,
                             windowFlags | SDL_WINDOW_FULLSCREEN_DESKTOP);
   } else {
