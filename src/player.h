@@ -2,8 +2,6 @@
 #define PLAYER_H
 
 #include "astar.h"
-// auto solution = Search(states, init, goal); init - Enemy location, goal -
-// Player location
 
 enum class Direction { kUp, kDown, kLeft, kRight };
 
@@ -12,12 +10,40 @@ public:
   Sprite(){};
   ~Sprite(){};
   Sprite(const State &_state) : state(_state) {}
+  Sprite(Sprite &);
+  Sprite(Sprite &&);
+  Sprite &operator=(Sprite &);
+  Sprite &operator=(Sprite &&);
+
   void setCoordinates(SDL_Point &&point) { this->point = point; }
 
 protected:
   State state;
   SDL_Point point; // top, left, counter-clockwise in world-map coordinate 20x20
 };
+
+Sprite::Sprite(Sprite &other) {
+  state = other.state;
+  point = other.point;
+};
+Sprite::Sprite(Sprite &&other) {
+  state = std::move(other.state);
+  point = std::move(other.point);
+};
+Sprite &Sprite::operator=(Sprite &other) {
+  if (this != &other) {
+    state = other.state;
+    point = other.point;
+  }
+  return *this;
+}
+Sprite &Sprite::operator=(Sprite &&other) {
+  if (this != &other) {
+    state = std::move(other.state);
+    point = std::move(other.point);
+  }
+  return *this;
+}
 
 class Movable : public Sprite {
 public:
@@ -106,7 +132,7 @@ void Player::action(const Direction direction, const int worldSize) {
   }
   }
 }
-//OR below implementation with boundary checks
+// OR below implementation with boundary checks
 void Player::up() { point.y--; }
 void Player::down() { point.y++; }
 void Player::left() { point.x--; }
@@ -138,7 +164,8 @@ Enemy &Enemy::operator=(Enemy &&other) {
 }
 void Enemy::action(const Direction direction, const int worldSize) {
 
-  // auto solution = Search(states, init, goal);
+  // auto solution = Search(states, init, goal); init - Enemy location, goal
+  // -Player location
 
 } // upfront finds path and calculate direction
 

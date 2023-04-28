@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 set(CMAKE_CXX_STANDARD 17)
-add_definitions(-std=c++17 -D_USE_MATH_DEFINES)
+add_definitions(-std=c++17 -D_USE_MATH_DEFINES -pthread)
 
 include_directories("C:/msys64/mingw64/include")
 
@@ -22,4 +22,4 @@ target_link_libraries(game ${MINGW32_LIBRARY} ${SDL2_LIBRARIES})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/map.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
 # MANUAL
-# g++ .\src\game.cpp -IC:\msys64\mingw64\include -lmingw32 -mwindows -lSDL2main -lSDL2 -lopengl32
+# g++ .\src\game.cpp -IC:\msys64\mingw64\include -lmingw32 -mwindows -lSDL2main -lSDL2 -lopengl32 -pthread

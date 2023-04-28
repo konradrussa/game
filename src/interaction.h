@@ -1,54 +1,46 @@
 #ifndef INTERACTION_H
 #define INTERACTION_H
 
-#include "player.h"
-#include "renderer.h"
+#include <future>
 
 class GameInteraction {
 public:
-  int userInteraction(std::unique_ptr<GameRenderer> &gRenderer, Player &player);
+  void userInteraction(std::promise<char> &&myPromise);
 
 private:
   SDL_Event event;
 };
 
-int GameInteraction::userInteraction(std::unique_ptr<GameRenderer> &gRenderer,
-                                     Player &player) {
+void GameInteraction::userInteraction(std::promise<char> &&myPromise) {
   SDL_PollEvent(&event);
   if (event.type == SDL_KEYDOWN) {
     switch (event.key.keysym.sym) {
     case SDLK_ESCAPE:
-      return 0;
+      myPromise.set_value('0');
+      return;
     case 'f':
-      gRenderer->fullscreen();
-      break;
+      myPromise.set_value('f');
+      return;
     case SDLK_UP:
-      player.up();
-      // update map
-      // send signal to enemy
-      break;
+      myPromise.set_value('u');
+      return;
     case SDLK_DOWN:
-      player.down();
-      // update map
-      // send signal to enemy
-      break;
+      myPromise.set_value('d');
+      return;
     case SDLK_LEFT:
-      player.left();
-      // update map
-      // send signal to enemy
-      break;
+      myPromise.set_value('l');
+      return;
     case SDLK_RIGHT:
-      player.right();
-      // update map
-      // send signal to enemy
-      break;
+      myPromise.set_value('r');
+      return;
     default:
       break;
     }
   } else if (event.type == SDL_QUIT) {
-    return 0;
+    myPromise.set_value('0');
+    return;
   }
-  return 1;
+  myPromise.set_value('1');
 }
 
 #endif

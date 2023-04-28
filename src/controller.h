@@ -5,10 +5,8 @@
 #include <algorithm>
 #include <condition_variable>
 #include <deque>
-#include <future>
 #include <iostream>
 #include <mutex>
-#include <thread>
 
 template <class T> class GameController {
 public:
