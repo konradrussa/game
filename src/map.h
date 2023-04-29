@@ -22,7 +22,6 @@ public:
 private:
   std::vector<std::vector<State>> states;
   std::vector<State> parseLine(std::string line);
-
 };
 
 std::vector<std::vector<State>> &GameMap::getStates() { return states; }
@@ -36,7 +35,7 @@ std::vector<State> GameMap::parseLine(std::string line) {
       row.push_back(State::kEmpty);
     } else if (n == '1') {
       row.push_back(State::kObstacle);
-    } else if (n == 'S') { //Start
+    } else if (n == 'S') { // Start
       row.push_back(State::kPlayer);
     } else if (n == 'X') {
       row.push_back(State::kFinish);

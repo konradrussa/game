@@ -3,6 +3,8 @@
 
 #include "astar.h"
 
+#include <memory>
+
 enum class Direction { kUp, kDown, kLeft, kRight };
 
 class Sprite {
@@ -16,6 +18,8 @@ public:
   Sprite &operator=(Sprite &&);
 
   void setCoordinates(SDL_Point &&point) { this->point = point; }
+  SDL_Point &getCoordinates() { return point; }
+  State &getState() { return state; }
 
 protected:
   State state;
@@ -45,37 +49,35 @@ Sprite &Sprite::operator=(Sprite &&other) {
   return *this;
 }
 
-class Movable : public Sprite {
+class Movable {
 public:
   virtual void action(const Direction direction,
                       const int worldSize) = 0; // pure virtual function
-protected:
-  Movable(){};
-  Movable(const State &_state) : Sprite(_state) {}
 };
 
-class Player : public Movable {
+class Player : public Sprite, public Movable {
 public:
   Player();
   ~Player();
-  Player(const State &_state) : Movable(_state) {}
+  Player(const State &_state) : Sprite(_state) {}
   Player(Player &);
   Player(Player &&);
   Player &operator=(Player &);
   Player &operator=(Player &&);
 
   void action(const Direction direction, const int worldSize) override;
-  void up();
-  void down();
-  void left();
-  void right();
+  void setObstacles(std::vector<std::shared_ptr<Sprite>> &obstacles);
+  bool checkNextActionNonObstacle(const Direction direction);
+
+protected:
+  std::vector<std::shared_ptr<Sprite>> *obstacles;
 };
 
-class Enemy : public Movable {
+class Enemy : public Sprite, public Movable {
 public:
   Enemy();
   ~Enemy();
-  Enemy(const State &_state) : Movable(_state) {}
+  Enemy(const State &_state) : Sprite(_state) {}
   Enemy(Enemy &);
   Enemy(Enemy &&);
   Enemy &operator=(Enemy &);
@@ -84,7 +86,7 @@ public:
   void action(const Direction direction, const int worldSize) override;
 };
 
-Player::Player() : Movable(State::kPlayer){};
+Player::Player() : Sprite(State::kPlayer){};
 Player::~Player(){};
 Player::Player(Player &other) {
   state = other.state;
@@ -108,7 +110,40 @@ Player &Player::operator=(Player &&other) {
   }
   return *this;
 }
+
+void Player::setObstacles(std::vector<std::shared_ptr<Sprite>> &obstacles) {
+  this->obstacles = &obstacles;
+}
+
+bool Player::checkNextActionNonObstacle(const Direction direction) {
+  bool nonObstacle = true;
+  switch (direction) {
+  case Direction::kLeft: {
+    int left = delta[0].real();
+
+    break;
+  }
+  case Direction::kDown: {
+    int down = delta[1].imag();
+
+    break;
+  }
+  case Direction::kRight: {
+    int right = delta[2].real();
+
+    break;
+  }
+  case Direction::kUp: {
+    int up = delta[3].imag();
+
+    break;
+  }
+  }
+  return nonObstacle;
+}
+
 void Player::action(const Direction direction, const int worldSize) {
+  checkNextActionNonObstacle(direction);
   switch (direction) {
   case Direction::kLeft: {
     int left = delta[0].real();
@@ -132,13 +167,8 @@ void Player::action(const Direction direction, const int worldSize) {
   }
   }
 }
-// OR below implementation with boundary checks
-void Player::up() { point.y--; }
-void Player::down() { point.y++; }
-void Player::left() { point.x--; }
-void Player::right() { point.x++; }
 
-Enemy::Enemy() : Movable(State::kEnemy){};
+Enemy::Enemy() : Sprite(State::kEnemy){};
 Enemy::~Enemy(){};
 Enemy::Enemy(Enemy &other) {
   state = other.state;
@@ -162,6 +192,7 @@ Enemy &Enemy::operator=(Enemy &&other) {
   }
   return *this;
 }
+
 void Enemy::action(const Direction direction, const int worldSize) {
 
   // auto solution = Search(states, init, goal); init - Enemy location, goal

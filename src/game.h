@@ -23,7 +23,7 @@ public:
   ~Game();
 
   bool initResources();
-  void userInteraction(std::shared_ptr<Player>&);
+  void userInteraction(std::shared_ptr<Player> &);
   void actionPlayer(std::shared_ptr<Player>,
                     std::vector<std::shared_ptr<Sprite>>);
   void actionEnemy(std::shared_ptr<Enemy>,
@@ -38,7 +38,7 @@ private:
   std::vector<std::thread> _threads;       // to improve latency
   std::vector<std::future<char>> _futures; // to improve throughput
   std::mutex _mtx;
-  int running = 1;
+  int _running = 1;
 };
 
 Game::Game() {

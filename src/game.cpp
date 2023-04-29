@@ -12,9 +12,6 @@ bool Game::initResources() {
   try {
     gameController->logging("Reading MAP");
     mapLoaded = gameMap->readMap();
-    if (mapLoaded) {
-      gameRenderer->setStates(&gameMap->getStates());
-    }
   } catch (...) {
     mapLoaded = false;
     gameController->handleException(std::current_exception());
@@ -31,22 +28,22 @@ void Game::userInteraction(std::shared_ptr<Player> &player) {
     gameRenderer->fullscreen();
     break;
   case '0':
-    running = 0;
+    _running = 0;
     break;
   case '1':
-    running = 1;
+    _running = 1;
     break;
   case 'l':
-    player->left();
+    player->action(Direction::kLeft, gameRenderer->getWorldSize());
     break;
   case 'r':
-    player->right();
+    player->action(Direction::kRight, gameRenderer->getWorldSize());
     break;
   case 'u':
-    player->up();
+    player->action(Direction::kUp, gameRenderer->getWorldSize());
     break;
   case 'd':
-    player->down();
+    player->action(Direction::kDown, gameRenderer->getWorldSize());
     break;
   }
 }
@@ -57,7 +54,7 @@ void Game::userInteraction(std::shared_ptr<Player> &player) {
 // 15 threads
 void Game::actionPlayer(std::shared_ptr<Player> player,
                         std::vector<std::shared_ptr<Sprite>> obstacles) {
-  while (running) {
+  while (_running) {
 
     std::unique_lock<std::mutex> uLock(_mtx);
     gameController->send(std::move(player));
@@ -69,7 +66,7 @@ void Game::actionPlayer(std::shared_ptr<Player> player,
 }
 void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
                        std::vector<std::shared_ptr<Sprite>> obstacles) {
-  while (running) {
+  while (_running) {
 
     std::shared_ptr<Player> p = gameController->receive(); // waiting condition
 
@@ -90,21 +87,21 @@ void Game::mainLoop() {
   std::vector<std::vector<State>> &states = gameMap->getStates();
 
   for (auto it = states.begin(); it != states.end(); ++it) {
-    int x = std::distance(states.begin(), it);
+    int y = std::distance(states.begin(), it);
     std::vector<State> cols = *it;
     for (auto it2 = cols.begin(); it2 != cols.end(); ++it2) {
-      int y = std::distance(cols.begin(), it2);
+      int x = std::distance(cols.begin(), it2);
       SDL_Point point{x, y};
-      if (State::kFinish == cols.at(y)) {
+      if (State::kFinish == cols.at(x)) {
         finish->setCoordinates(std::move(point));
       }
-      if (State::kPlayer == cols.at(y)) {
+      if (State::kPlayer == cols.at(x)) {
         player->setCoordinates(std::move(point));
       }
-      if (State::kEnemy == cols.at(y)) {
+      if (State::kEnemy == cols.at(x)) {
         enemy->setCoordinates(std::move(point));
       }
-      if (State::kObstacle == cols.at(y)) {
+      if (State::kObstacle == cols.at(x)) {
         std::shared_ptr<Sprite> obstacle(new Sprite(State::kObstacle));
         obstacle->setCoordinates(std::move(point));
         obstacles.emplace_back(std::move(obstacle));
@@ -112,12 +109,14 @@ void Game::mainLoop() {
     }
   }
 
+  gameRenderer->setObstaclesAndFinish(states.size(), obstacles, finish);
+
   _threads.emplace_back(
       std::thread(&Game::actionPlayer, this, player, obstacles));
   _threads.emplace_back(
       std::thread(&Game::actionEnemy, this, enemy, obstacles));
 
-  while (running) {
+  while (_running) {
     std::promise<char> myPromise;
     std::future<char> myFuture = myPromise.get_future();
 
@@ -127,7 +126,7 @@ void Game::mainLoop() {
     userInteraction(player);
     uLock.unlock();
 
-    gameRenderer->render();
+    gameRenderer->render(player, enemy);
   }
 }
 

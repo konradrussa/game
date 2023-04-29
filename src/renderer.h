@@ -5,31 +5,39 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <assert.h>
+#include <vector>
 
 #include "map.h"
 
 #define winWidth 1000
 #define winHeight 1000
 
+// forward declaration to avoid include cycles
+class Sprint;
+
 class GameRenderer {
 public:
   GameRenderer();
   ~GameRenderer();
 
-  void render();
-  void setStates(std::vector<std::vector<State>> *states);
+  void setObstaclesAndFinish(int numberOfCells,
+                             std::vector<std::shared_ptr<Sprite>> &obstacles,
+                             std::shared_ptr<Sprite> &finish);
+  void render(std::shared_ptr<Player> &player, std::shared_ptr<Enemy> &enemy);
   void fullscreen();
+
+  int getWorldSize() { return winWidth; } // printed window
 
 private:
   SDL_Renderer *renderer;
   SDL_Window *window;
   SDL_GLContext context;
   SDL_WindowFlags windowFlags;
-  std::vector<std::vector<State>> *states;
-  int numberOfCells = 0, sizeOfCell = 0, rows = 0, cols = 0;
+  int numberOfCells = 0, sizeOfCell = 0;
   SDL_Rect rect;
   bool fullScreen = false;
-  void renderRectangle();
+  std::vector<std::shared_ptr<Sprite>> *obstacles;
+  std::shared_ptr<Sprite> *finish;
 };
 
 GameRenderer::GameRenderer() {
@@ -52,59 +60,51 @@ GameRenderer::~GameRenderer() {
   SDL_Quit();
 }
 
-void GameRenderer::renderRectangle() {
-  rect.x = cols * sizeOfCell;
-  rect.y = rows * sizeOfCell;
-  rect.h = sizeOfCell;
-  rect.w = sizeOfCell;
-  SDL_RenderFillRect(renderer, &rect);
+void GameRenderer::setObstaclesAndFinish(
+    int numberOfCells, std::vector<std::shared_ptr<Sprite>> &obstacles,
+    std::shared_ptr<Sprite> &finish) {
+  this->obstacles = &obstacles;
+  this->finish = &finish;
+  numberOfCells = numberOfCells;
+  sizeOfCell = int(winHeight / numberOfCells);
 }
 
-void GameRenderer::render() {
+void GameRenderer::render(std::shared_ptr<Player> &player,
+                          std::shared_ptr<Enemy> &enemy) {
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
-  rows = 0, cols = 0;
-  for (auto &stateRow : *states) {
-    for (State &state : stateRow) {
-      switch (state) {
-      case State::kEmpty: {
-        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-        break;
-      }
-      case State::kEnemy: {
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-        break;
-      }
-      case State::kFinish: {
-        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
-        break;
-      }
-      case State::kObstacle: {
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        break;
-      }
-      case State::kPath: {
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0x00, 0xFF);
-        break;
-      }
-      case State::kPlayer: {
-        SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
-        break;
-      }
-      }
-      renderRectangle();
-      cols++;
-    }
-    cols = 0, rows++;
-  }
-  SDL_RenderPresent(renderer);
-  // SDL_Delay(1000);
-}
 
-void GameRenderer::setStates(std::vector<std::vector<State>> *states) {
-  this->states = states;
-  numberOfCells = states->size();
-  sizeOfCell = int(winHeight / numberOfCells);
+  // common size
+  rect.h = sizeOfCell;
+  rect.w = sizeOfCell;
+
+  SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
+  SDL_Point &finishPoint = (*finish)->getCoordinates();
+  rect.x = finishPoint.x * sizeOfCell;
+  rect.y = finishPoint.y * sizeOfCell;
+  SDL_RenderFillRect(renderer, &rect);
+
+  for (std::shared_ptr<Sprite> &obstacle : *obstacles) {
+    SDL_Point &obstaclePoint = obstacle->getCoordinates();
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    rect.x = obstaclePoint.x * sizeOfCell;
+    rect.y = obstaclePoint.y * sizeOfCell;
+    SDL_RenderFillRect(renderer, &rect);
+  }
+
+  SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
+  SDL_Point &playerPoint = player->getCoordinates();
+  rect.x = playerPoint.x * sizeOfCell;
+  rect.y = playerPoint.y * sizeOfCell;
+  SDL_RenderFillRect(renderer, &rect);
+
+  SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+  SDL_Point &enemyPoint = enemy->getCoordinates();
+  rect.x = enemyPoint.x * sizeOfCell;
+  rect.y = enemyPoint.y * sizeOfCell;
+  SDL_RenderFillRect(renderer, &rect);
+
+  SDL_RenderPresent(renderer);
 }
 
 void GameRenderer::fullscreen() {
