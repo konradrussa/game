@@ -31,9 +31,6 @@ void Game::userInteraction(std::shared_ptr<Player> &player) {
   case '0':
     _running = 0;
     break;
-  case '1':
-    _running = 1;
-    break;
   case 'l':
     player->action(Direction::kLeft, gameRenderer->getWorldSize());
     break;
