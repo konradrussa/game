@@ -65,7 +65,7 @@ public:
 
   void action(const Direction direction, const int worldSize) override;
   void setObstacles(std::vector<std::shared_ptr<Sprite>> &obstacles);
-  bool checkNextActionObstacle(const Direction direction);
+  bool checkNextActionObstacle(const Direction direction, const int worldSize);
 
 protected:
   std::vector<std::shared_ptr<Sprite>> *obstacles;
@@ -113,7 +113,8 @@ void Player::setObstacles(std::vector<std::shared_ptr<Sprite>> &obstacles) {
   this->obstacles = &obstacles;
 }
 
-bool Player::checkNextActionObstacle(const Direction direction) {
+bool Player::checkNextActionObstacle(const Direction direction,
+                                     const int worldSize) {
   bool isObstacle = false;
   int x = point.x;
   int y = point.y;
@@ -137,6 +138,15 @@ bool Player::checkNextActionObstacle(const Direction direction) {
   }
   }
 
+  if (y < 0)
+    return true;
+  if (y >= worldSize)
+    return true;
+  if (x < 0)
+    return true;
+  if (x >= worldSize)
+    return true;
+
   for (auto &obstacle : *obstacles) {
     SDL_Point &point = obstacle->getCoordinates();
     if (x == point.x && y == point.y)
@@ -147,29 +157,29 @@ bool Player::checkNextActionObstacle(const Direction direction) {
 }
 
 void Player::action(const Direction direction, const int worldSize) {
-  if (checkNextActionObstacle(direction)) {
+  if (checkNextActionObstacle(direction, worldSize)) {
     return;
   }
 
   switch (direction) {
   case Direction::kLeft: {
     int left = delta[0].real();
-    point.x = (point.x + left >= 0) ? point.x + left : point.x;
+    point.x = point.x + left;
     break;
   }
   case Direction::kDown: {
     int down = delta[1].imag();
-    point.y = (point.y - down < worldSize) ? point.y - down : point.y;
+    point.y = point.y - down;
     break;
   }
   case Direction::kRight: {
     int right = delta[2].real();
-    point.x = (point.x + right < worldSize) ? point.x + right : point.x;
+    point.x = point.x + right;
     break;
   }
   case Direction::kUp: {
     int up = delta[3].imag();
-    point.y = (point.y - up >= 0) ? point.y - up : point.y;
+    point.y = point.y - up;
     break;
   }
   }
