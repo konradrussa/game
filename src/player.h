@@ -29,11 +29,11 @@ protected:
 Sprite::Sprite(Sprite &other) {
   state = other.state;
   point = other.point;
-};
+}
 Sprite::Sprite(Sprite &&other) {
   state = std::move(other.state);
   point = std::move(other.point);
-};
+}
 Sprite &Sprite::operator=(Sprite &other) {
   if (this != &other) {
     state = other.state;
@@ -67,7 +67,7 @@ public:
 
   void action(const Direction direction, const int worldSize) override;
   void setObstacles(std::vector<std::shared_ptr<Sprite>> &obstacles);
-  bool checkNextActionNonObstacle(const Direction direction);
+  bool checkNextActionObstacle(const Direction direction);
 
 protected:
   std::vector<std::shared_ptr<Sprite>> *obstacles;
@@ -91,11 +91,11 @@ Player::~Player(){};
 Player::Player(Player &other) {
   state = other.state;
   point = other.point;
-};
+}
 Player::Player(Player &&other) {
   state = std::move(other.state);
   point = std::move(other.point);
-};
+}
 Player &Player::operator=(Player &other) {
   if (this != &other) {
     state = other.state;
@@ -115,35 +115,38 @@ void Player::setObstacles(std::vector<std::shared_ptr<Sprite>> &obstacles) {
   this->obstacles = &obstacles;
 }
 
-bool Player::checkNextActionNonObstacle(const Direction direction) {
-  bool nonObstacle = true;
+bool Player::checkNextActionObstacle(const Direction direction) {
+  bool isObstacle = false;
   switch (direction) {
   case Direction::kLeft: {
-    int left = delta[0].real();
+    //int left = delta[0].real();
 
     break;
   }
   case Direction::kDown: {
-    int down = delta[1].imag();
+    //int down = delta[1].imag();
 
     break;
   }
   case Direction::kRight: {
-    int right = delta[2].real();
+    //int right = delta[2].real();
 
     break;
   }
   case Direction::kUp: {
-    int up = delta[3].imag();
+    //int up = delta[3].imag();
 
     break;
   }
   }
-  return nonObstacle;
+  return isObstacle;
 }
 
 void Player::action(const Direction direction, const int worldSize) {
-  checkNextActionNonObstacle(direction);
+  if (checkNextActionObstacle(direction)) {
+    return;
+  }
+
   switch (direction) {
   case Direction::kLeft: {
     int left = delta[0].real();
@@ -152,12 +155,14 @@ void Player::action(const Direction direction, const int worldSize) {
   }
   case Direction::kDown: {
     int down = delta[1].imag();
-    point.y = (point.y - down <= worldSize) ? point.y - down : point.y;
+    //point.y = (point.y - down <= worldSize) ? point.y - down : point.y;
+    point.y = point.y - down;
     break;
   }
   case Direction::kRight: {
     int right = delta[2].real();
-    point.x = (point.x + right <= worldSize) ? point.x + right : point.x;
+    //point.x = (point.x + right <= worldSize) ? point.x + right : point.x;
+    point.x = point.x + right;
     break;
   }
   case Direction::kUp: {
@@ -173,11 +178,11 @@ Enemy::~Enemy(){};
 Enemy::Enemy(Enemy &other) {
   state = other.state;
   point = other.point;
-};
+}
 Enemy::Enemy(Enemy &&other) {
   state = std::move(other.state);
   point = std::move(other.point);
-};
+}
 Enemy &Enemy::operator=(Enemy &other) {
   if (this != &other) {
     state = other.state;

@@ -56,19 +56,27 @@ void Game::actionPlayer(std::shared_ptr<Player> player,
                         std::vector<std::shared_ptr<Sprite>> obstacles) {
   while (_running) {
 
-    std::unique_lock<std::mutex> uLock(_mtx);
+    std::unique_lock<std::mutex> _uLock(_mtx);
     gameController->send(std::move(player));
-    uLock.unlock();
+    _uLock.unlock();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     // SDL_Delay(1000);
   }
 }
+//+1 thread from async
 void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
                        std::vector<std::shared_ptr<Sprite>> obstacles) {
   while (_running) {
 
-    std::shared_ptr<Player> p = gameController->receive(); // waiting condition
+    std::future<std::shared_ptr<Player>> _playerFuture = std::async([this]() {
+      return this->gameController->receive();
+    }); // without std::launch::async, will be parallel or in same thread chosen
+        // on runtime
+    std::shared_ptr<Player> p = _playerFuture.get(); //or wait and get
+    // OR
+    //  std::shared_ptr<Player> p = gameController->receive();
+    // waiting condition at receive
 
     // enemy->action()
 
@@ -117,14 +125,14 @@ void Game::mainLoop() {
       std::thread(&Game::actionEnemy, this, enemy, obstacles));
 
   while (_running) {
-    std::promise<char> myPromise;
-    std::future<char> myFuture = myPromise.get_future();
+    std::promise<char> _myPromise;
+    std::future<char> _myFuture = _myPromise.get_future();
 
-    std::unique_lock<std::mutex> uLock(_mtx);
-    _futures.emplace_back(std::move(myFuture));
-    gameInteraction->userInteraction(std::move(myPromise));
+    std::unique_lock<std::mutex> _uLock(_mtx);
+    _futures.emplace_back(std::move(_myFuture));
+    gameInteraction->userInteraction(std::move(_myPromise));
     userInteraction(player);
-    uLock.unlock();
+    _uLock.unlock();
 
     gameRenderer->render(player, enemy);
   }

@@ -26,16 +26,16 @@ public:
   void render(std::shared_ptr<Player> &player, std::shared_ptr<Enemy> &enemy);
   void fullscreen();
 
-  int getWorldSize() { return winWidth; } // printed window
+  int getWorldSize() { return _numberOfCells; } // printed window
 
 private:
   SDL_Renderer *renderer;
   SDL_Window *window;
   SDL_GLContext context;
   SDL_WindowFlags windowFlags;
-  int numberOfCells = 0, sizeOfCell = 0;
+  int _numberOfCells = 0, _sizeOfCell = 0;
   SDL_Rect rect;
-  bool fullScreen = false;
+  bool _fullScreen = false;
   std::vector<std::shared_ptr<Sprite>> *obstacles;
   std::shared_ptr<Sprite> *finish;
 };
@@ -65,8 +65,8 @@ void GameRenderer::setObstaclesAndFinish(
     std::shared_ptr<Sprite> &finish) {
   this->obstacles = &obstacles;
   this->finish = &finish;
-  numberOfCells = numberOfCells;
-  sizeOfCell = int(winHeight / numberOfCells);
+  _numberOfCells = numberOfCells;
+  _sizeOfCell = int(winHeight / _numberOfCells);
 }
 
 void GameRenderer::render(std::shared_ptr<Player> &player,
@@ -75,41 +75,41 @@ void GameRenderer::render(std::shared_ptr<Player> &player,
   SDL_RenderClear(renderer);
 
   // common size
-  rect.h = sizeOfCell;
-  rect.w = sizeOfCell;
+  rect.h = _sizeOfCell;
+  rect.w = _sizeOfCell;
 
   SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
   SDL_Point &finishPoint = (*finish)->getCoordinates();
-  rect.x = finishPoint.x * sizeOfCell;
-  rect.y = finishPoint.y * sizeOfCell;
+  rect.x = finishPoint.x * _sizeOfCell;
+  rect.y = finishPoint.y * _sizeOfCell;
   SDL_RenderFillRect(renderer, &rect);
 
   for (std::shared_ptr<Sprite> &obstacle : *obstacles) {
     SDL_Point &obstaclePoint = obstacle->getCoordinates();
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    rect.x = obstaclePoint.x * sizeOfCell;
-    rect.y = obstaclePoint.y * sizeOfCell;
+    rect.x = obstaclePoint.x * _sizeOfCell;
+    rect.y = obstaclePoint.y * _sizeOfCell;
     SDL_RenderFillRect(renderer, &rect);
   }
 
   SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
   SDL_Point &playerPoint = player->getCoordinates();
-  rect.x = playerPoint.x * sizeOfCell;
-  rect.y = playerPoint.y * sizeOfCell;
+  rect.x = playerPoint.x * _sizeOfCell;
+  rect.y = playerPoint.y * _sizeOfCell;
   SDL_RenderFillRect(renderer, &rect);
 
   SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
   SDL_Point &enemyPoint = enemy->getCoordinates();
-  rect.x = enemyPoint.x * sizeOfCell;
-  rect.y = enemyPoint.y * sizeOfCell;
+  rect.x = enemyPoint.x * _sizeOfCell;
+  rect.y = enemyPoint.y * _sizeOfCell;
   SDL_RenderFillRect(renderer, &rect);
 
   SDL_RenderPresent(renderer);
 }
 
 void GameRenderer::fullscreen() {
-  fullScreen = !fullScreen;
-  if (fullScreen) {
+  _fullScreen = !_fullScreen;
+  if (_fullScreen) {
     SDL_SetWindowFullscreen(window,
                             windowFlags | SDL_WINDOW_FULLSCREEN_DESKTOP);
   } else {
