@@ -40,7 +40,7 @@ void GameInteraction::userInteraction(std::promise<char> &&_myPromise) {
     _myPromise.set_value('0');
     return;
   }
-  _myPromise.set_value('1');
+  _myPromise.set_value('1'); // dont set, and put on waiting
 }
 
 #endif

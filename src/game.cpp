@@ -152,7 +152,7 @@ void Game::mainLoop() {
     std::promise<char> _myPromise;
     std::future<char> _myFuture = _myPromise.get_future();
     _futures.emplace_back(std::move(_myFuture));
-    gameInteraction->userInteraction(std::move(_myPromise));
+    gameInteraction->userInteraction(std::move(_myPromise)); //should be async ...
 
     std::unique_lock<std::mutex> _uLock(_mtx);
     userInteraction(player);
