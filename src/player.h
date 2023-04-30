@@ -155,14 +155,12 @@ void Player::action(const Direction direction, const int worldSize) {
   }
   case Direction::kDown: {
     int down = delta[1].imag();
-    //point.y = (point.y - down <= worldSize) ? point.y - down : point.y;
-    point.y = point.y - down;
+    point.y = (point.y - down < worldSize) ? point.y - down : point.y;
     break;
   }
   case Direction::kRight: {
     int right = delta[2].real();
-    //point.x = (point.x + right <= worldSize) ? point.x + right : point.x;
-    point.x = point.x + right;
+    point.x = (point.x + right < worldSize) ? point.x + right : point.x;
     break;
   }
   case Direction::kUp: {

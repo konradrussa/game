@@ -15,6 +15,7 @@ class GameMap;
 class GameRenderer;
 class GameInteraction;
 class Movable;
+struct SDL_Point;
 template <class T> class GameController;
 
 class Game {
@@ -34,7 +35,7 @@ private:
   std::unique_ptr<GameMap> gameMap;
   std::unique_ptr<GameRenderer> gameRenderer;
   std::unique_ptr<GameInteraction> gameInteraction;
-  std::shared_ptr<GameController<std::shared_ptr<Player>>> gameController;
+  std::shared_ptr<GameController<SDL_Point>> gameController;
   std::vector<std::thread> _threads;       // to improve latency
   std::vector<std::future<char>> _futures; // to improve throughput
   std::mutex _mtx;
@@ -45,7 +46,7 @@ Game::Game() {
   gameMap = std::make_unique<GameMap>();
   gameRenderer = std::make_unique<GameRenderer>();
   gameInteraction = std::make_unique<GameInteraction>();
-  gameController = std::make_shared<GameController<std::shared_ptr<Player>>>();
+  gameController = std::make_shared<GameController<SDL_Point>>();
 }
 
 Game::~Game() {

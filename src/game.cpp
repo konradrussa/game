@@ -6,6 +6,7 @@
 #include "renderer.h"
 
 #include <chrono>
+#include <random>
 
 bool Game::initResources() {
   bool mapLoaded = false;
@@ -54,34 +55,57 @@ void Game::userInteraction(std::shared_ptr<Player> &player) {
 // 15 threads
 void Game::actionPlayer(std::shared_ptr<Player> player,
                         std::vector<std::shared_ptr<Sprite>> obstacles) {
+
+  SDL_Point previousPlace{0, 0};
   while (_running) {
 
-    std::unique_lock<std::mutex> _uLock(_mtx);
-    gameController->send(std::move(player));
-    _uLock.unlock();
+    SDL_Point currentPlace = player->getCoordinates();
+    if (previousPlace.x != currentPlace.x ||
+        previousPlace.y != currentPlace.y) {
+      std::unique_lock<std::mutex> _uLock(_mtx);
+      gameController->send(std::move(currentPlace));
+      _uLock.unlock();
+      previousPlace.x = currentPlace.x;
+      previousPlace.y = currentPlace.y;
+    }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    // SDL_Delay(1000);
+    //  SDL_Delay(1000);
   }
+  gameController->send(std::move(previousPlace));
 }
 //+1 thread from async
 void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
                        std::vector<std::shared_ptr<Sprite>> obstacles) {
+  int low = 0, high = this->gameRenderer->getWorldSize() - 1;
+  std::random_device rd;
+  std::mt19937 eng(rd());
+  std::uniform_int_distribution distr(low, high);
+
   while (_running) {
 
-    std::future<std::shared_ptr<Player>> _playerFuture = std::async([this]() {
+    std::future<SDL_Point> _playerFuture = std::async([this]() {
       return this->gameController->receive();
-    }); // without std::launch::async, will be parallel or in same thread chosen
-        // on runtime
-    std::shared_ptr<Player> p = _playerFuture.get(); //or wait and get
+    }); // without std::launch::async, will be parallel or in same thread
+    // chosen
+    //  on runtime
+    SDL_Point playerLocation = _playerFuture.get(); // or wait and get
+
     // OR
-    //  std::shared_ptr<Player> p = gameController->receive();
+    // SDL_Point newPlayerPoint = gameController->receive();
     // waiting condition at receive
 
-    // enemy->action()
+    // land at random position if distance was not close enough, x and y further
+    // than 5 places
+    SDL_Point point(playerLocation); // same as player
+    point.x = distr(eng);            // override with random
+    point.y = distr(eng);            // override with random
+    std::unique_lock<std::mutex> _uLock(_mtx);
+    enemy->setCoordinates(std::move(point));
+    _uLock.unlock();
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    // SDL_Delay(1000);
+    // if distance satisfy use regular move action
+    //  enemy->action()
   }
 }
 
@@ -127,10 +151,10 @@ void Game::mainLoop() {
   while (_running) {
     std::promise<char> _myPromise;
     std::future<char> _myFuture = _myPromise.get_future();
-
-    std::unique_lock<std::mutex> _uLock(_mtx);
     _futures.emplace_back(std::move(_myFuture));
     gameInteraction->userInteraction(std::move(_myPromise));
+
+    std::unique_lock<std::mutex> _uLock(_mtx);
     userInteraction(player);
     _uLock.unlock();
 
