@@ -66,8 +66,8 @@ void Game::actionPlayer(std::shared_ptr<Player> player,
       previousPlace.y = currentPlace.y;
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    //  SDL_Delay(1000);
+    // std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    //   SDL_Delay(1000);
   }
   gameController->send(std::move(previousPlace));
 }
@@ -150,11 +150,12 @@ void Game::mainLoop() {
     std::promise<char> _myPromise;
     std::future<char> _myFuture = _myPromise.get_future();
     _futures.emplace_back(std::move(_myFuture));
-    gameInteraction->userInteraction(std::move(_myPromise)); //should be async ...
+    gameInteraction->userInteraction(
+        std::move(_myPromise)); // should be async ...
 
     std::unique_lock<std::mutex> _uLock(_mtx);
     userInteraction(player);
-    //gameRenderer->render(player, enemy);
+    // gameRenderer->render(player, enemy);
     _uLock.unlock();
 
     gameRenderer->render(player, enemy);
