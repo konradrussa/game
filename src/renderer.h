@@ -7,8 +7,6 @@
 #include <assert.h>
 #include <vector>
 
-#include "map.h"
-
 #define winWidth 1000
 #define winHeight 1000
 

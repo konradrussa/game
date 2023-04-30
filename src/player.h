@@ -5,8 +5,6 @@
 
 #include <memory>
 
-enum class Direction { kUp, kDown, kLeft, kRight };
-
 class Sprite {
 public:
   Sprite(){};

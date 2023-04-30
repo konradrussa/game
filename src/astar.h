@@ -11,6 +11,8 @@
 const std::complex<int> delta[4]{
     {-1, 0}, {0, -1}, {1, 0}, {0, 1}}; // order matters, used at player.h
 
+enum class Direction { kUp, kDown, kLeft, kRight };
+
 /**
  * Compare the F values of two cells.
  */
