@@ -139,6 +139,7 @@ void Game::mainLoop() {
   }
 
   gameRenderer->setObstaclesAndFinish(states.size(), obstacles, finish);
+  player->setObstacles(obstacles);
 
   _threads.emplace_back(
       std::thread(&Game::actionPlayer, this, player, obstacles));
@@ -153,6 +154,7 @@ void Game::mainLoop() {
 
     std::unique_lock<std::mutex> _uLock(_mtx);
     userInteraction(player);
+    //gameRenderer->render(player, enemy);
     _uLock.unlock();
 
     gameRenderer->render(player, enemy);

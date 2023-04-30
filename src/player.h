@@ -115,28 +115,34 @@ void Player::setObstacles(std::vector<std::shared_ptr<Sprite>> &obstacles) {
 
 bool Player::checkNextActionObstacle(const Direction direction) {
   bool isObstacle = false;
+  int x = point.x;
+  int y = point.y;
+
   switch (direction) {
   case Direction::kLeft: {
-    //int left = delta[0].real();
-
+    x = point.x + delta[0].real();
     break;
   }
   case Direction::kDown: {
-    //int down = delta[1].imag();
-
+    y = point.y - delta[1].imag();
     break;
   }
   case Direction::kRight: {
-    //int right = delta[2].real();
-
+    x = point.x + delta[2].real();
     break;
   }
   case Direction::kUp: {
-    //int up = delta[3].imag();
-
+    y = point.y - delta[3].imag();
     break;
   }
   }
+
+  for (auto &obstacle : *obstacles) {
+    SDL_Point &point = obstacle->getCoordinates();
+    if (x == point.x && y == point.y)
+      return true;
+  }
+
   return isObstacle;
 }
 
