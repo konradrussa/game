@@ -42,16 +42,16 @@ void Game::userInteraction(std::shared_ptr<Player> &player) {
   char userKey = interaction();
   switch (userKey) {
   case 'l':
-    player->action(Direction::kLeft, gameRenderer->getWorldSize());
+    player->action(Direction::kLeft);
     break;
   case 'r':
-    player->action(Direction::kRight, gameRenderer->getWorldSize());
+    player->action(Direction::kRight);
     break;
   case 'u':
-    player->action(Direction::kUp, gameRenderer->getWorldSize());
+    player->action(Direction::kUp);
     break;
   case 'd':
-    player->action(Direction::kDown, gameRenderer->getWorldSize());
+    player->action(Direction::kDown);
     break;
   }
 }
@@ -70,7 +70,6 @@ void Game::actionPlayer(std::shared_ptr<Player> player,
     _uLock.unlock();
     if (previousPlace.x != currentPlace.x ||
         previousPlace.y != currentPlace.y) {
-      // std::unique_lock<std::mutex> _uLock(_mtx);
       _uLock.lock();
       gameController->send(std::move(currentPlace));
       _uLock.unlock();
@@ -78,7 +77,8 @@ void Game::actionPlayer(std::shared_ptr<Player> player,
       previousPlace.y = currentPlace.y;
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100)); //reduce CPU usage
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(100)); // reduce CPU usage
     //    SDL_Delay(1000);
   }
   gameController->send(std::move(previousPlace));
@@ -111,10 +111,9 @@ void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
     point.y = distr(eng);            // override with random
     std::unique_lock<std::mutex> _uLock(_mtx);
     enemy->setCoordinates(std::move(point));
-    _uLock.unlock();
-
     // if distance satisfy use regular move action
     //  enemy->action()
+    _uLock.unlock();
   }
 }
 
@@ -128,12 +127,12 @@ bool Game::checkFinish(std::shared_ptr<Player> &player,
 
 void Game::mainLoop() {
 
+  std::vector<std::vector<State>> &states = gameMap->getStates();
+
   std::vector<std::shared_ptr<Sprite>> obstacles;
-  std::shared_ptr<Player> player(new Player());
+  std::shared_ptr<Player> player(new Player(states.size()));
   std::shared_ptr<Enemy> enemy(new Enemy());
   std::shared_ptr<Sprite> finish(new Sprite(State::kFinish));
-
-  std::vector<std::vector<State>> &states = gameMap->getStates();
 
   for (auto it = states.begin(); it != states.end(); ++it) {
     int y = std::distance(states.begin(), it);
