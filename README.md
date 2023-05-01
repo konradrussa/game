@@ -37,9 +37,10 @@ S,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
 double click a.exe
 or build/game.exe
 
+# How to play
 Esc - end game
 
-r - restart
+r - restart, when you get to blue point
 
 arrow up - up
 
