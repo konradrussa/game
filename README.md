@@ -7,7 +7,7 @@ Manual compilation:
 
 g++ .\src\game.cpp -IC:\msys64\mingw64\include -lmingw32 -mwindows -lSDL2main -lSDL2 -lopengl32 -pthread
 
-# Map options:
+# Map options
 game is based on map at data/map.txt
 
 you can modify X finish point location by setting it, means X elsewhere, also setting blank as 0 means cell is empty or 1 is obstacle
@@ -35,7 +35,7 @@ S,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 ```
 
-# How to run:
+# How to run
 double click a.exe
 or build/game.exe
 
