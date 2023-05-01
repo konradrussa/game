@@ -91,7 +91,7 @@ void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
   std::mt19937 eng(rd());
   std::uniform_int_distribution<int> distr(low, high);
 
-  //int actionDistance = int(this->gameRenderer->getWorldSize()/4);
+  // int actionDistance = int(this->gameRenderer->getWorldSize()/4);
 
   while (_running) {
 
@@ -120,11 +120,15 @@ void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
 }
 
 bool Game::checkFinish(std::shared_ptr<Player> &player,
+                       std::shared_ptr<Enemy> &enemy,
                        std::shared_ptr<Sprite> &finish) {
   SDL_Point &playerLocation = player->getCoordinates();
+  SDL_Point &enemyLocation = enemy->getCoordinates();
   SDL_Point &finishLocation = finish->getCoordinates();
-  return (playerLocation.x == finishLocation.x) &&
-         (playerLocation.y == finishLocation.y);
+  return ((playerLocation.x == finishLocation.x) &&
+          (playerLocation.y == finishLocation.y)) ||
+         ((enemyLocation.x == playerLocation.x) &&
+          (enemyLocation.y == playerLocation.y));
 }
 
 void Game::mainLoop() {
@@ -180,7 +184,7 @@ void Game::mainLoop() {
     } else {
       std::unique_lock<std::mutex> _uLock(_mtx);
       userInteraction(player);
-      _finish = checkFinish(player, finish);
+      _finish = checkFinish(player, enemy, finish);
       if (_finish) {
         SDL_Point moveToSaveLocation{0, 0};
         player->setCoordinates(std::move(moveToSaveLocation));

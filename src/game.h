@@ -30,7 +30,7 @@ public:
   void actionEnemy(std::shared_ptr<Enemy>,
                    std::vector<std::shared_ptr<Sprite>>);
   void mainLoop();
-  bool checkFinish(std::shared_ptr<Player> &, std::shared_ptr<Sprite> &);
+  bool checkFinish(std::shared_ptr<Player> &, std::shared_ptr<Enemy> &, std::shared_ptr<Sprite> &);
 
 private:
   std::unique_ptr<GameMap> gameMap;
