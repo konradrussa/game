@@ -37,6 +37,23 @@ private:
   bool _fullScreen = false;
   std::vector<std::shared_ptr<Sprite>> *obstacles;
   std::shared_ptr<Sprite> *finish;
+  const std::vector<SDL_Vertex> verts = {
+      {
+          SDL_FPoint{500, 250},
+          SDL_Color{255, 0, 0, 255},
+          SDL_FPoint{0},
+      },
+      {
+          SDL_FPoint{250, 750},
+          SDL_Color{0, 0, 255, 255},
+          SDL_FPoint{0},
+      },
+      {
+          SDL_FPoint{750, 750},
+          SDL_Color{0, 255, 0, 255},
+          SDL_FPoint{0},
+      },
+  };
 };
 
 GameRenderer::GameRenderer() {
@@ -117,23 +134,6 @@ void GameRenderer::fullscreen() {
 }
 
 void GameRenderer::renderFinish() {
-  const std::vector<SDL_Vertex> verts = {
-      {
-          SDL_FPoint{400, 150},
-          SDL_Color{255, 0, 0, 255},
-          SDL_FPoint{0},
-      },
-      {
-          SDL_FPoint{200, 450},
-          SDL_Color{0, 0, 255, 255},
-          SDL_FPoint{0},
-      },
-      {
-          SDL_FPoint{600, 450},
-          SDL_Color{0, 255, 0, 255},
-          SDL_FPoint{0},
-      },
-  };
   SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
   SDL_RenderClear(renderer);
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), nullptr, 0);
