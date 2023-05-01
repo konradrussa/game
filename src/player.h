@@ -108,27 +108,26 @@ Player &Player::operator=(Player &other) {
   if (this != &other) {
     state = other.state;
     point = other.point;
+    if (obstacles) {
+      delete obstacles;
+    }
+    *obstacles = *other.obstacles;
+    _worldSize = other._worldSize;
   }
-  if (obstacles) {
-    delete obstacles;
-  }
-  *obstacles = *other.obstacles;
-  _worldSize = other._worldSize;
-
   return *this;
 }
 Player &Player::operator=(Player &&other) {
   if (this != &other) {
     state = std::move(other.state);
     point = std::move(other.point);
+    if (obstacles) {
+      delete obstacles;
+    }
+    _worldSize = other._worldSize;
+    other._worldSize = 0;
+    obstacles = other.obstacles;
+    other.obstacles = nullptr;
   }
-  if (obstacles) {
-    delete obstacles;
-  }
-  _worldSize = other._worldSize;
-  other._worldSize = 0;
-  obstacles = other.obstacles;
-  other.obstacles = nullptr;
   return *this;
 }
 
