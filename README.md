@@ -61,6 +61,10 @@ double click a.exe
 or build/game.exe
 
 # How to play
+
+When you reach blue rectangle it's the goal!
+You should not meet enemy!
+
 Esc - end game
 
 r - restart, when you get to blue point
