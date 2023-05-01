@@ -62,7 +62,7 @@ or build/game.exe
 
 # How to play
 
-When you reach blue rectangle it's the goal!
+When you reach blue rectangle that's the goal!
 You should not meet enemy!
 
 Esc - end game
