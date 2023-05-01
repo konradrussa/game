@@ -91,6 +91,8 @@ void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
   std::mt19937 eng(rd());
   std::uniform_int_distribution distr(low, high);
 
+  //int actionDistance = int(this->gameRenderer->getWorldSize()/4);
+
   while (_running) {
 
     std::future<SDL_Point> _playerFuture = std::async([this]() {
@@ -105,14 +107,14 @@ void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
     // waiting condition at receive
 
     // land at random position if distance was not close enough, x and y
-    // further than 5 places
+    // further than 5 places, it's actionDistance 20/4
     SDL_Point point(playerLocation); // same as player
     point.x = distr(eng);            // override with random
     point.y = distr(eng);            // override with random
     std::unique_lock<std::mutex> _uLock(_mtx);
     enemy->setCoordinates(std::move(point));
     // if distance satisfy use regular move action
-    //  enemy->action()
+    enemy->action();
     _uLock.unlock();
   }
 }
