@@ -34,7 +34,7 @@ template <class T> T GameController<T>::receive() {
 }
 
 template <class T> void GameController<T>::send(T &&msg) {
-  std::lock_guard gLock(_mtx);
+  std::lock_guard<std::mutex>  gLock(_mtx);
   _queue.push_back(std::move(msg));
   _cond.notify_one();
 }

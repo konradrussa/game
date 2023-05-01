@@ -7,6 +7,24 @@ Manual compilation:
 
 g++ .\src\game.cpp -IC:\msys64\mingw64\include -lmingw32 -mwindows -lSDL2main -lSDL2 -lopengl32 -pthread
 
+Linux:
+git clone https://github.com/libsdl-org/SDL
+cd SDL
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release --parallel
+
+#CMake >= 3.15
+sudo cmake --install . --config Release
+
+#CMake <= 3.14
+sudo make install
+
+Manual compilation:
+gcc -o game src/game.cpp `sdl2-config --cflags --libs` -pthread
+
+
 # Map options
 game is based on map at data/map.txt
 

@@ -89,7 +89,7 @@ void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
   int low = 0, high = this->gameRenderer->getWorldSize() - 1;
   std::random_device rd;
   std::mt19937 eng(rd());
-  std::uniform_int_distribution distr(low, high);
+  std::uniform_int_distribution<int> distr(low, high);
 
   //int actionDistance = int(this->gameRenderer->getWorldSize()/4);
 
