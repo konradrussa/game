@@ -78,7 +78,7 @@ void Game::actionPlayer(std::shared_ptr<Player> player,
       previousPlace.y = currentPlace.y;
     }
 
-    // std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100)); //reduce CPU usage
     //    SDL_Delay(1000);
   }
   gameController->send(std::move(previousPlace));
