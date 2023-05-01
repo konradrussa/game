@@ -20,7 +20,7 @@ bool Game::initResources() {
   return mapLoaded;
 }
 
-void Game::userInteraction(std::shared_ptr<Player> &player) {
+char Game::interaction() {
   char userKey = _futures.back().get();
   _futures.pop_back();
 
@@ -31,6 +31,16 @@ void Game::userInteraction(std::shared_ptr<Player> &player) {
   case '0':
     _running = 0;
     break;
+  case 'R':
+    _finish = false;
+    break;
+  }
+  return userKey;
+}
+
+void Game::userInteraction(std::shared_ptr<Player> &player) {
+  char userKey = interaction();
+  switch (userKey) {
   case 'l':
     player->action(Direction::kLeft, gameRenderer->getWorldSize());
     break;
@@ -55,11 +65,13 @@ void Game::actionPlayer(std::shared_ptr<Player> player,
 
   SDL_Point previousPlace{0, 0};
   while (_running) {
-
+    std::unique_lock<std::mutex> _uLock(_mtx);
     SDL_Point currentPlace = player->getCoordinates();
+    _uLock.unlock();
     if (previousPlace.x != currentPlace.x ||
         previousPlace.y != currentPlace.y) {
-      std::unique_lock<std::mutex> _uLock(_mtx);
+      // std::unique_lock<std::mutex> _uLock(_mtx);
+      _uLock.lock();
       gameController->send(std::move(currentPlace));
       _uLock.unlock();
       previousPlace.x = currentPlace.x;
@@ -67,7 +79,7 @@ void Game::actionPlayer(std::shared_ptr<Player> player,
     }
 
     // std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    //   SDL_Delay(1000);
+    //    SDL_Delay(1000);
   }
   gameController->send(std::move(previousPlace));
 }
@@ -92,8 +104,8 @@ void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
     // SDL_Point newPlayerPoint = gameController->receive();
     // waiting condition at receive
 
-    // land at random position if distance was not close enough, x and y further
-    // than 5 places
+    // land at random position if distance was not close enough, x and y
+    // further than 5 places
     SDL_Point point(playerLocation); // same as player
     point.x = distr(eng);            // override with random
     point.y = distr(eng);            // override with random
@@ -104,6 +116,14 @@ void Game::actionEnemy(std::shared_ptr<Enemy> enemy,
     // if distance satisfy use regular move action
     //  enemy->action()
   }
+}
+
+bool Game::checkFinish(std::shared_ptr<Player> &player,
+                       std::shared_ptr<Sprite> &finish) {
+  SDL_Point &playerLocation = player->getCoordinates();
+  SDL_Point &finishLocation = finish->getCoordinates();
+  return (playerLocation.x == finishLocation.x) &&
+         (playerLocation.y == finishLocation.y);
 }
 
 void Game::mainLoop() {
@@ -153,12 +173,22 @@ void Game::mainLoop() {
     gameInteraction->userInteraction(
         std::move(_myPromise)); // should be async ...
 
-    std::unique_lock<std::mutex> _uLock(_mtx);
-    userInteraction(player);
-    // gameRenderer->render(player, enemy);
-    _uLock.unlock();
-
-    gameRenderer->render(player, enemy);
+    if (_finish) {
+      interaction();
+      gameRenderer->renderFinish();
+    } else {
+      std::unique_lock<std::mutex> _uLock(_mtx);
+      userInteraction(player);
+      _finish = checkFinish(player, finish);
+      if (_finish) {
+        SDL_Point moveToSaveLocation{0, 0};
+        player->setCoordinates(std::move(moveToSaveLocation));
+        _uLock.unlock();
+      } else {
+        _uLock.unlock();
+        gameRenderer->render(player, enemy);
+      }
+    }
   }
 }
 

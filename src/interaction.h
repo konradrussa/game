@@ -21,6 +21,9 @@ void GameInteraction::userInteraction(std::promise<char> &&_myPromise) {
     case 'f':
       _myPromise.set_value('f');
       return;
+    case 'r':
+      _myPromise.set_value('R');
+      return;
     case SDLK_UP:
       _myPromise.set_value('u');
       return;

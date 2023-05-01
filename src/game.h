@@ -30,6 +30,7 @@ public:
   void actionEnemy(std::shared_ptr<Enemy>,
                    std::vector<std::shared_ptr<Sprite>>);
   void mainLoop();
+  bool checkFinish(std::shared_ptr<Player> &, std::shared_ptr<Sprite> &);
 
 private:
   std::unique_ptr<GameMap> gameMap;
@@ -40,6 +41,9 @@ private:
   std::vector<std::future<char>> _futures; // to improve throughput
   std::mutex _mtx;
   int _running = 1;
+  bool _finish = false;
+
+  char interaction();
 };
 
 Game::Game() {
