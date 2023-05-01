@@ -12,6 +12,7 @@ game is based on map at data/map.txt
 
 you can modify X finish point location by setting it, means X elsewhere, also setting blank as 0 means cell is empty or 1 is obstacle
 
+```
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,
 0,0,0,0,0,E,0,0,0,0,0,1,1,1,1,1,1,0,0,0,
@@ -32,6 +33,7 @@ S,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+```
 
 # How to run:
 double click a.exe
