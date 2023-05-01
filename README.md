@@ -11,7 +11,8 @@ g++ .\src\game.cpp -IC:\msys64\mingw64\include -lmingw32 -mwindows -lSDL2main -l
 game is based on map at data/map.txt
 
 you can modify X finish point location by setting it, means X elsewhere, also setting blank as 0 means cell is empty or 1 is obstacle
-uou can also create bigger map but keep x to y as 1 : 1, currently map has 20 x 20 cells, also window size is 1000 pixels, it scales itself
+
+you can also create bigger map but keep x to y as 1 : 1, currently map has 20 x 20 cells, also window size is 1000 pixels, it scales itself
 
 ```
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
