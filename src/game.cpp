@@ -166,6 +166,7 @@ void Game::mainLoop() {
   gameRenderer->setObstaclesAndFinish(states.size(), obstacles, finish);
   player->setObstacles(obstacles);
 
+  // run worker threads
   _threads.emplace_back(
       std::thread(&Game::actionPlayer, this, player, obstacles));
   _threads.emplace_back(
@@ -204,6 +205,7 @@ void Game::mainLoop() {
       }
     }
 
+    // evaluate frame
     auto frameEnd =
         std::chrono::steady_clock::now(); // 	 time in milliseconds
 
@@ -211,6 +213,7 @@ void Game::mainLoop() {
                         frameEnd - frameStart)
                         .count();
 
+    // evaluate framerate
     if (duration < targetFrameDuration) {
       auto difference = targetFrameDuration - duration;
       std::this_thread::sleep_for(std::chrono::milliseconds(difference));
