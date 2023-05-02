@@ -91,9 +91,6 @@ public:
 
 Player::Player() : Sprite(State::kPlayer){};
 Player::~Player() {
-  if (obstacles) {
-    delete obstacles;
-  }
 };
 Player::Player(Player &other) {
   state = other.state;
