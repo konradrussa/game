@@ -173,14 +173,16 @@ void Game::mainLoop() {
       std::thread(&Game::actionEnemy, this, enemy, obstacles));
 
   // evaluate frame
-  auto targetFrameDuration =
+  std::chrono::milliseconds::rep targetFrameDuration =
       std::chrono::milliseconds(1000 / 60)
           .count(); // milliseconds per frame at 60 frames per second.
 
+  std::chrono::steady_clock::time_point frameStart, frameEnd;
+  std::chrono::milliseconds::rep duration;
+
   while (_running) {
 
-    auto frameStart =
-        std::chrono::steady_clock::now(); // 	 time in milliseconds
+    frameStart = std::chrono::steady_clock::now(); // 	 time in milliseconds
 
     std::promise<char> _myPromise;
     std::future<char> _myFuture = _myPromise.get_future();
@@ -206,17 +208,15 @@ void Game::mainLoop() {
     }
 
     // evaluate frame
-    auto frameEnd =
-        std::chrono::steady_clock::now(); // 	 time in milliseconds
+    frameEnd = std::chrono::steady_clock::now(); // 	 time in milliseconds
 
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
-                        frameEnd - frameStart)
-                        .count();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(frameEnd -
+                                                                     frameStart).count();
 
     // evaluate framerate
     if (duration < targetFrameDuration) {
-      auto difference = targetFrameDuration - duration;
-      std::this_thread::sleep_for(std::chrono::milliseconds(difference));
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(targetFrameDuration - duration));
     }
   }
 }
