@@ -8,15 +8,15 @@ set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 set(SOURCE_FILES src/game.cpp)
 
+project(CPP_GAME)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/map.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
+
 if(UNIX)
     add_definitions(-std=c++17)
     set(SDL2_LIBRARIES `sdl2-config --cflags --libs` -pthread CACHE STRING "link flags for SDL")
     add_executable(game ${SOURCE_FILES})
     target_link_libraries(game ${SDL2_LIBRARIES})
 endif(UNIX)
-
-project(CPP_GAME)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/map.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/data/)
 
 if(WIN32)
     add_definitions(-std=c++17 -D_USE_MATH_DEFINES -pthread)
