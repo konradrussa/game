@@ -201,7 +201,7 @@ When you reach blue rectangle that's the goal!
 
 Esc - end game
 
-r - restart, when you get to blue point
+r - restart, when you get to blue point or enemy reaches you first
 
 arrow up - up
 
