@@ -5,6 +5,7 @@
 
 #include <SDL2/SDL.h>
 #include <memory>
+#include <vector>
 
 class Sprite {
 public:
@@ -110,6 +111,7 @@ Player &Player::operator=(Player &other) {
     point = other.point;
     if (obstacles) {
       delete obstacles;
+      *obstacles = std::vector<std::shared_ptr<Sprite>>();
     }
     *obstacles = *other.obstacles;
     _worldSize = other._worldSize;
@@ -122,6 +124,7 @@ Player &Player::operator=(Player &&other) {
     point = std::move(other.point);
     if (obstacles) {
       delete obstacles;
+      *obstacles = std::vector<std::shared_ptr<Sprite>>();
     }
     _worldSize = other._worldSize;
     other._worldSize = 0;
