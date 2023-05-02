@@ -119,6 +119,7 @@ A std::condition_variable is used in the project code to synchronize thread exec
 ### Windows:
 
 Download and install MSYS2, add bin to System Path C:\msys64\mingw64\bin
+
 Download and install CMake, add bin to System Path ...
 
 ```
