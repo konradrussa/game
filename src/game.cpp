@@ -171,7 +171,16 @@ void Game::mainLoop() {
   _threads.emplace_back(
       std::thread(&Game::actionEnemy, this, enemy, obstacles));
 
+  // evaluate frame
+  auto targetFrameDuration =
+      std::chrono::milliseconds(1000 / 60)
+          .count(); // milliseconds per frame at 60 frames per second.
+
   while (_running) {
+
+    auto frameStart =
+        std::chrono::steady_clock::now(); // 	 time in milliseconds
+
     std::promise<char> _myPromise;
     std::future<char> _myFuture = _myPromise.get_future();
     _futures.emplace_back(std::move(_myFuture));
@@ -193,6 +202,18 @@ void Game::mainLoop() {
         _uLock.unlock();
         gameRenderer->render(player, enemy);
       }
+    }
+
+    auto frameEnd =
+        std::chrono::steady_clock::now(); // 	 time in milliseconds
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+                        frameEnd - frameStart)
+                        .count();
+
+    if (duration < targetFrameDuration) {
+      auto difference = targetFrameDuration - duration;
+      std::this_thread::sleep_for(std::chrono::milliseconds(difference));
     }
   }
 }
