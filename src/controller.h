@@ -51,8 +51,8 @@ void GameController<T>::handleException(std::exception_ptr exPtr) {
 }
 
 template <class T> void GameController<T>::logging(std::string msg) {
-  SDL_Log("Error: %s\n", msg.c_str());
-  std::cerr << "ERROR: " << msg << std::endl;
+  SDL_Log("Logging: %s\n", msg.c_str());
+  std::cerr << "Logging: " << msg << std::endl;
 }
 
 template <class T> void GameController<T>::logging() {
